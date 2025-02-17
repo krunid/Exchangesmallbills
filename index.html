@@ -3,231 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบคำนวณแลกแบงค์ย่อย</title>
-    <!-- เพิ่ม Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>ระบบคำนวณแลกแบงค์</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23f0f0f0"/><text x="50" y="100" font-family="Arial" font-size="20" fill="%23dddddd">💰</text><text x="100" y="150" font-family="Arial" font-size="20" fill="%23dddddd">🪙</text></svg>') repeat;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 90%;
-            height: 100vh;
-            background-image: url('https://png.pngtree.com/background/20231028/original/pngtree-thai-banknotes-and-coins-on-white-background-wealth-coins-economy-photo-picture-image_5759036.jpg'); /* เพิ่มรูปแบงค์และเหรียญเป็นพื้นหลัง */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
         }
+
         .container {
-            background-color: rgba(255, 255, 255, 0.9); /* เพิ่มพื้นหลังขาวแบบโปร่งใส */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            box-sizing: border-box; /* ให้ padding และ border ไม่เพิ่มขนาด */
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%; /* ปรับให้ปุ่มเต็มความกว้าง */
-            box-sizing: border-box; /* ให้ padding และ border ไม่เพิ่มขนาด */
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.95); /* เพิ่มพื้นหลังขาวแบบโปร่งใส */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 90%;
             max-width: 500px;
-            width: 90%; /* ปรับความกว้างให้พอดีกับหน้าจอ */
+            margin-bottom: 2rem;
         }
-        .popup-overlay {
+
+        h1 {
+            background: linear-gradient(45deg, #1a237e, #ffd700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        input {
+            width: calc(100% - 1.6rem);
+            padding: 0.8rem;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #1a237e, #3498db);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
         }
-        .popup-content {
-            text-align: center;
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        .close-btn {
-            margin-top: 10px;
-            padding: 5px 10px;
-            background-color: #dc3545;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .close-btn:hover {
-            background-color: #c82333;
-        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 1rem;
         }
+
         th, td {
-            padding: 10px;
+            padding: 1rem;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
         }
+
         th {
-            background-color: #28a745;
+            background: linear-gradient(45deg, #1a237e, #3498db);
             color: white;
         }
+
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background: #f9f9f9;
         }
-        tr:hover {
-            background-color: #ddd;
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
         }
-        .amount-display {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
+
+        .close:hover {
+            color: #1a237e;
         }
-        footer {
-            margin-top: 20px;
+
+        .result-header {
+            color: #1a237e;
+            margin-bottom: 1rem;
             text-align: center;
-            font-size: 14px;
-            color: #fff; /* เปลี่ยนสีข้อความเป็นขาวเพื่อให้เห็นชัดบนพื้นหลัง */
-            background-color: rgba(0, 0, 0, 0.5); /* เพิ่มพื้นหลังดำแบบโปร่งใส */
-            padding: 10px;
-            border-radius: 5px;
         }
+
+        .currency-emoji {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        footer {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
         footer a {
-            color: #28a745;
+            color: #1a237e;
             text-decoration: none;
+            transition: color 0.3s;
         }
+
         footer a:hover {
-            text-decoration: underline;
+            color: #ffd700;
+        }
+
+        @media (max-width: 600px) {
+            .container, .modal-content, footer {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2><i class="fas fa-calculator"></i> ระบบคำนวณแลกแบงค์ย่อย</h2>
-    <input type="number" id="amount" placeholder="กรอกจำนวนเงิน" min="0" required>
-    <button onclick="calculateBills()"><i class="fas fa-coins"></i> คำนวณ</button>
-</div>
-
-<div class="popup-overlay" id="popupOverlay"></div>
-<div class="popup" id="popup">
-    <div class="popup-content">
-        <h2><i class="fas fa-money-bill-wave"></i> ผลการคำนวณแบงค์ย่อย</h2>
-        <div class="amount-display">จำนวนเงิน: <span id="totalAmount"></span> บาท</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ประเภท</th>
-                    <th>จำนวน</th>
-                </tr>
-            </thead>
-            <tbody id="result">
-            </tbody>
-        </table>
-        <button class="close-btn" onclick="closePopup()"><i class="fas fa-times"></i> ปิด</button>
+    <div class="container">
+        <h1>💸 ระบบคำนวณแลกแบงค์ย่อย 💸</h1>
+        <div class="input-group">
+            <input type="number" id="amount" placeholder="กรุณาใส่จำนวนเงิน" min="1" inputmode="numeric" pattern="[0-9]*">
+        </div>
+        <button onclick="calculate()">คำนวณ</button>
     </div>
-</div>
 
-<footer>
-    จัดทำโดย <a href="https://web.facebook.com/KrunidE23VKF" target="_blank">ครูนิด ศิษย์หลวงพ่อเสือ</a> | 
-    สร้างจาก <a href="https://www.deepseek.com" target="_blank">DeepSeek AI</a>
-</footer>
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">×</span>
+            <h2 class="result-header">ผลการคำนวณ</h2>
+            <p id="totalAmount"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชนิด</th>
+                        <th>จำนวน</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTable">
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<script>
-    function calculateBills() {
-        const amount = parseInt(document.getElementById('amount').value);
-        if (isNaN(amount) || amount < 0) {
-            alert("กรุณากรอกจำนวนเงินที่ถูกต้อง");
-            return;
+    <footer>
+        <p>จัดทำโดย: <a href="https://web.facebook.com/KrunidE23VKF" target="_blank">ครูนิด ศิษย์หลวงพ่อเสือ</a></p>
+    </footer>
+
+    <script>
+        function calculate() {
+            const amount = parseInt(document.getElementById('amount').value);
+            if (isNaN(amount) || amount < 1) {
+                alert('กรุณาใส่จำนวนเงินที่ถูกต้อง');
+                return;
+            }
+
+            const denominations = [
+                { value: 1000, emoji: '💵' },
+                { value: 500, emoji: '💵' },
+                { value: 100, emoji: '💵' },
+                { value: 50, emoji: '💵' },
+                { value: 20, emoji: '💵' },
+                { value: 10, emoji: '🪙' },
+                { value: 5, emoji: '🪙' },
+                { value: 2, emoji: '🪙' },
+                { value: 1, emoji: '🪙' }
+            ];
+
+            let remaining = amount;
+            let resultHtml = '';
+
+            for (const denom of denominations) {
+                if (remaining >= denom.value) {
+                    const count = Math.floor(remaining / denom.value);
+                    remaining = remaining % denom.value;
+                    
+                    if (count > 0) {
+                        resultHtml += `
+                            <tr>
+                                <td>${denom.emoji} ${denom.value} บาท</td>
+                                <td>${count}</td>
+                            </tr>
+                        `;
+                    }
+                }
+            }
+
+            document.getElementById('totalAmount').innerHTML = `
+                <strong>จำนวนเงินทั้งหมด: ${amount.toLocaleString()} บาท</strong>
+            `;
+            document.getElementById('resultTable').innerHTML = resultHtml;
+            document.getElementById('resultModal').style.display = 'flex';
         }
 
-        let remainingAmount = amount;
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+            document.getElementById('amount').value = ''; // ล้างข้อมูลเมื่อปิด modal
+        }
 
-        const bills = [
-            { value: 1000, id: 'b1000', label: 'แบงค์ 1000 บาท' },
-            { value: 500, id: 'b500', label: 'แบงค์ 500 บาท' },
-            { value: 100, id: 'b100', label: 'แบงค์ 100 บาท' },
-            { value: 50, id: 'b50', label: 'แบงค์ 50 บาท' },
-            { value: 20, id: 'b20', label: 'แบงค์ 20 บาท' },
-            { value: 5, id: 'b5', label: 'เหรียญ 5 บาท' },
-            { value: 1, id: 'b1', label: 'เหรียญ 1 บาท' }
-        ];
+        // ปิด Modal เมื่อคลิกภายนอก
+        window.onclick = function(event) {
+            const modal = document.getElementById('resultModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
 
-        let resultHTML = '';
-
-        bills.forEach(bill => {
-            const count = Math.floor(remainingAmount / bill.value);
-            remainingAmount %= bill.value;
-
-            if (count > 0) {
-                resultHTML += `
-                    <tr>
-                        <td>${bill.label}</td>
-                        <td>${count} ${bill.value >= 20 ? 'ใบ' : 'เหรียญ'}</td>
-                    </tr>
-                `;
+        // บังคับให้รับเฉพาะตัวเลข
+        document.getElementById('amount').addEventListener('keypress', function(e) {
+            if (e.key < '0' || e.key > '9') {
+                e.preventDefault();
             }
         });
-
-        if (resultHTML === '') {
-            resultHTML = '<tr><td colspan="2">ไม่พบแบงค์หรือเหรียญที่ต้องแลก</td></tr>';
-        }
-
-        // แสดงจำนวนเงินที่กรอก
-        document.getElementById('totalAmount').textContent = amount.toLocaleString();
-
-        document.getElementById('result').innerHTML = resultHTML;
-
-        document.getElementById('popup').style.display = 'block';
-        document.getElementById('popupOverlay').style.display = 'block';
-    }
-
-    function closePopup() {
-        // ล้างข้อมูลใน input
-        document.getElementById('amount').value = '';
-        // ล้างผลลัพธ์ใน popup
-        document.getElementById('result').innerHTML = '';
-        // ปิด popup
-        document.getElementById('popup').style.display = 'none';
-        document.getElementById('popupOverlay').style.display = 'none';
-    }
-</script>
-
+    </script>
 </body>
 </html>
