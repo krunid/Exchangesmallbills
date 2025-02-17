@@ -65,7 +65,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             max-width: 500px;
-            width: 100%;
+            width: 90%; /* ปรับความกว้างให้พอดีกับหน้าจอ */
         }
         .popup-overlay {
             display: none;
@@ -112,6 +112,12 @@
         tr:hover {
             background-color: #ddd;
         }
+        .amount-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
         footer {
             margin-top: 20px;
             text-align: center;
@@ -142,6 +148,7 @@
 <div class="popup" id="popup">
     <div class="popup-content">
         <h2><i class="fas fa-money-bill-wave"></i> ผลการคำนวณแบงค์ย่อย</h2>
+        <div class="amount-display">จำนวนเงิน: <span id="totalAmount"></span> บาท</div>
         <table>
             <thead>
                 <tr>
@@ -157,7 +164,8 @@
 </div>
 
 <footer>
-    จัดทำโดย <a href="https://web.facebook.com/KrunidE23VKF" target="_blank">ครูนิด ศิษย์หลวงพ่อเสือ</a>
+    จัดทำโดย <a href="https://web.facebook.com/KrunidE23VKF" target="_blank">ครูนิด ศิษย์หลวงพ่อเสือ</a> | 
+    สร้างจาก <a href="https://www.deepseek.com" target="_blank">DeepSeek AI</a>
 </footer>
 
 <script>
@@ -199,6 +207,9 @@
         if (resultHTML === '') {
             resultHTML = '<tr><td colspan="2">ไม่พบแบงค์หรือเหรียญที่ต้องแลก</td></tr>';
         }
+
+        // แสดงจำนวนเงินที่กรอก
+        document.getElementById('totalAmount').textContent = amount.toLocaleString();
 
         document.getElementById('result').innerHTML = resultHTML;
 
