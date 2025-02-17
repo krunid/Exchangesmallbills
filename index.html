@@ -6,18 +6,20 @@
     <title>ระบบคำนวณแลกแบงค์</title>
     <style>
         body {
-            background-image: url('https://png.pngtree.com/background/20231028/original/pngtree-thai-banknotes-and-coins-on-white-background-wealth-coins-economy-photo-picture-image_5759036.jpg'); /* เพิ่มรูปแบงค์และเหรียญเป็นพื้นหลัง */
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            background-image: var(--bg-image);
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            flex-direction: column;
-            font-family: 'Sarabun', sans-serif;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            justify-content: center;
         }
 
         .container {
@@ -25,8 +27,6 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
             margin-bottom: 2rem;
         }
 
@@ -37,8 +37,9 @@
             color: transparent;
             text-align: center;
             margin-bottom: 2rem;
-            font-size: 1.8rem;
+            font-size: 2rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         .input-group {
@@ -47,12 +48,13 @@
         }
 
         input {
-            width: calc(100% - 1.6rem);
+            width: 100%;
             padding: 0.8rem;
             border: 2px solid #3498db;
             border-radius: 8px;
             font-size: 1.1rem;
             outline: none;
+            box-sizing: border-box;
             -moz-appearance: textfield;
         }
 
@@ -88,16 +90,18 @@
             background: rgba(0,0,0,0.5);
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .modal-content {
             background: white;
             padding: 2rem;
             border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         table {
@@ -139,20 +143,14 @@
             text-align: center;
         }
 
-        .currency-emoji {
-            font-size: 1.2rem;
-            margin-right: 0.5rem;
-        }
-
         footer {
             background: white;
             padding: 1rem;
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 500px;
             text-align: center;
-            margin-bottom: 2rem;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         footer a {
@@ -165,19 +163,64 @@
             color: #ffd700;
         }
 
-        @media (max-width: 600px) {
+        /* Responsive Design */
+        /* Mobile - Small */
+        @media (max-width: 320px) {
             .container, .modal-content, footer {
-                width: 95%;
                 padding: 1rem;
             }
-
+            
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
             }
 
             th, td {
                 padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            input, button {
                 font-size: 0.9rem;
+            }
+        }
+
+        /* Mobile - Normal */
+        @media (min-width: 321px) and (max-width: 480px) {
+            .container, .modal-content, footer {
+                padding: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Tablet */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container, .modal-content, footer {
+                max-width: 440px;
+            }
+        }
+
+        /* Small Desktop */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container, .modal-content, footer {
+                max-width: 600px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1025px) {
+            .container, .modal-content, footer {
+                max-width: 800px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            input, button {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -214,23 +257,49 @@
     </footer>
 
     <script>
+        // สร้างรายการรูปภาพพื้นหลัง
+        const backgrounds = [
+            "https://www.billcounter.co.th/wp-content/uploads/2024/09/blog-c2-2.jpg", // ภาพที่ 1
+            "https://f.ptcdn.info/965/052/000/oug0cveageYugGdi2Xh-o.jpg", // ภาพที่ 2
+            "https://sirivalai.com/uploads/article/31-1497507170.jpg"  // ภาพที่ 3
+        ];
+
+        // สุ่มเลือกพื้นหลัง
+        function setRandomBackground() {
+            const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            document.documentElement.style.setProperty('--bg-image', `url('${randomBg}')`);
+            
+            // เพิ่มความโปร่งใสให้กับ container และ modal
+            document.querySelector('.container').style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            const modal = document.querySelector('.modal-content');
+            if (modal) {
+                modal.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            }
+        }
+
+        // เรียกใช้ฟังก์ชันตอนโหลดหน้าเว็บ
+        window.onload = function() {
+            setRandomBackground();
+        };
         function calculate() {
-            const amount = parseInt(document.getElementById('amount').value);
+            const amount = parseFloat(document.getElementById('amount').value);
             if (isNaN(amount) || amount < 1) {
                 alert('กรุณาใส่จำนวนเงินที่ถูกต้อง');
                 return;
             }
 
             const denominations = [
-                { value: 1000, emoji: '💵' },
-                { value: 500, emoji: '💵' },
-                { value: 100, emoji: '💵' },
-                { value: 50, emoji: '💵' },
-                { value: 20, emoji: '💵' },
-                { value: 10, emoji: '🪙' },
-                { value: 5, emoji: '🪙' },
-                { value: 2, emoji: '🪙' },
-                { value: 1, emoji: '🪙' }
+                { value: 1000, emoji: '💵', type: 'บาท' },
+                { value: 500, emoji: '💵', type: 'บาท' },
+                { value: 100, emoji: '💵', type: 'บาท' },
+                { value: 50, emoji: '💵', type: 'บาท' },
+                { value: 20, emoji: '💵', type: 'บาท' },
+                { value: 10, emoji: '🪙', type: 'บาท' },
+                { value: 5, emoji: '🪙', type: 'บาท' },
+                { value: 2, emoji: '🪙', type: 'บาท' },
+                { value: 1, emoji: '🪙', type: 'บาท' },
+                { value: 0.5, emoji: '🪙', type: 'สตางค์' },
+                { value: 0.25, emoji: '🪙', type: 'สตางค์' }
             ];
 
             let remaining = amount;
@@ -242,9 +311,12 @@
                     remaining = remaining % denom.value;
                     
                     if (count > 0) {
+                        let displayValue = denom.type === 'สตางค์' 
+                            ? `${denom.value * 100} ${denom.type}`
+                            : `${denom.value} ${denom.type}`;
                         resultHtml += `
                             <tr>
-                                <td>${denom.emoji} ${denom.value} บาท</td>
+                                <td>${denom.emoji} ${displayValue}</td>
                                 <td>${count}</td>
                             </tr>
                         `;
@@ -272,10 +344,32 @@
             }
         }
 
-        // บังคับให้รับเฉพาะตัวเลข
+        // บังคับให้รับเฉพาะตัวเลขและจุดทศนิยม
         document.getElementById('amount').addEventListener('keypress', function(e) {
-            if (e.key < '0' || e.key > '9') {
+            // อนุญาตให้ใส่ตัวเลขและจุดทศนิยม
+            if ((e.key < '0' || e.key > '9') && e.key !== '.') {
                 e.preventDefault();
+            }
+            
+            // ป้องกันการใส่จุดทศนิยมซ้ำ
+            if (e.key === '.' && this.value.includes('.')) {
+                e.preventDefault();
+            }
+            
+            // ป้องกันการใส่จุดทศนิยมเป็นตัวแรก
+            if (e.key === '.' && this.value.length === 0) {
+                e.preventDefault();
+            }
+        });
+
+        // จำกัดทศนิยมไม่เกิน 2 ตำแหน่ง
+        document.getElementById('amount').addEventListener('input', function(e) {
+            let value = this.value;
+            if (value.includes('.')) {
+                let decimalPlaces = value.split('.')[1];
+                if (decimalPlaces.length > 2) {
+                    this.value = value.slice(0, value.indexOf('.') + 3);
+                }
             }
         });
     </script>
